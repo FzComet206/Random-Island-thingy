@@ -25,9 +25,16 @@ public class MapGenerator : MonoBehaviour
         public float negativeClamp;
         [Range(0, 1)]
         public float flattenScale;
-        
+
+        public bool useHeightCurve;
+        public AnimationCurve heightCurve;
+        public bool useDepthCurve;
+        public AnimationCurve depthCurve;
+
         public float offsetx;
         public float offsety;
+        
+        public bool useFlatShading;
     }
 
     [Header("Map Input Parameters")] [SerializeField]
@@ -39,7 +46,7 @@ public class MapGenerator : MonoBehaviour
         
         display.DrawMeshMap(MeshGenerator.GenerateTerrainMesh(
             NoiseMap.GetNoiseMap(options),
-            options.depth, 
-            true));
+            options
+            ));
     }
 }

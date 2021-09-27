@@ -1,5 +1,6 @@
 using System;
 
+// below code uses Sabastian Lague's Simplex noise algorithm
 public class Noise
 {
     #region Values

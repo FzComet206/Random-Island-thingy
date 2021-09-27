@@ -1,22 +1,36 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class MeshGenerator
 {
-    public static MeshData GenerateTerrainMesh(int [,] heightMap, float heightScale, bool useFlatShading)
+    public static MeshData GenerateTerrainMesh(float [,] heightMap, MapGenerator.Options op)
     {
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
         int vertexIndex = 0;
         
-        MeshData meshData = new MeshData(width, height, useFlatShading);
-        
+        MeshData meshData = new MeshData(width, height, op.useFlatShading);
+
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
                     // this sets the vertices for mesh
-                    meshData.vertices[vertexIndex] = new Vector3(x, heightMap[x, y] * heightScale, y);
+                    if (op.useDepthCurve)
+                    {
+                        meshData.vertices[vertexIndex] = new Vector3(
+                            x, 
+                            heightMap[x, y] * op.depthCurve.Evaluate(heightMap[x, y]) * op.depth,
+                            y);
+                    }
+                    else
+                    {
+                        meshData.vertices[vertexIndex] = new Vector3(
+                            x, 
+                            heightMap[x, y] * op.depth,
+                            y);
+                    }
                     // uv tells each vertex where it locates with respect to rest vertices (0 to 1)
                     meshData.uvs[vertexIndex] = new Vector2(x / (float) width, y / (float) height);
 
