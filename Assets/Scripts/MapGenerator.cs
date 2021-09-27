@@ -21,6 +21,11 @@ public class MapGenerator : MonoBehaviour
         public int depth;
         public float heightScale;
         
+        [Range(0, 1)]
+        public float negativeClamp;
+        [Range(0, 1)]
+        public float flattenScale;
+        
         public float offsetx;
         public float offsety;
     }

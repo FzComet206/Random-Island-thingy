@@ -250,15 +250,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   options:
-    seed: 12312
+    seed: 174115261
     mapWidth: 2048
     mapHeight: 2048
     scale: 300
     octaves: 5
     persistance: 0.08
     lacunarity: 8
-    depth: 5
-    heightScale: 15
+    depth: 4
+    heightScale: 12
+    negativeClamp: 0.65
+    flattenScale: 0.5
     offsetx: 0
     offsety: 0
 --- !u!4 &1054543663
