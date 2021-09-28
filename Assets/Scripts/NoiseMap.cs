@@ -98,7 +98,8 @@ public class NoiseMap
                 {
                     // inverseLerp returns 0 and 1
                     float normalizedHeight = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
-                    noiseMap[x, y] = Mathf.RoundToInt(
+                    // todo" floor to int smooth the terrain by a bit, future marching square like algorithm can fix unwanted spikes
+                    noiseMap[x, y] = Mathf.FloorToInt(
                         nm.heightScale * 
                         (nm.heightCurve.Evaluate(normalizedHeight) / 2 + normalizedHeight));
                 }
