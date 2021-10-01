@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -113,7 +112,7 @@ public class MeshData
     public Mesh CreateMesh()
     {
         // build mesh
-        Mesh mesh = new Mesh();
+        Mesh mesh = new Mesh(); 
         mesh.indexFormat = IndexFormat.UInt32;
         mesh.vertices = vertices;
         mesh.triangles = triangles;

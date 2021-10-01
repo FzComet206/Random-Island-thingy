@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.AccessControl;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class NoiseMap 

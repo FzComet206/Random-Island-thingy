@@ -9,7 +9,8 @@ public class ActualMapDisplay : MonoBehaviour
     public void DrawMeshMap(MeshData meshData)
     {
         Mesh data = meshData.CreateMesh();
-        meshFiler.sharedMesh = data;
+        meshFiler.name = "GeneratedMesh";
+        meshFiler.mesh = data;
         meshCollider.sharedMesh = data;
     }
     
