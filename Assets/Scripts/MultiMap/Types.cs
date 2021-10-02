@@ -8,8 +8,7 @@ public static class Types
     public struct MainMapOptions
     {
         public int seed;
-        public float offsetx;
-        public float offsety;
+        public Vector2 offset;
         
         [Range(10, 2049)]
         public int mapWidth;

@@ -7,8 +7,8 @@ using UnityEngine;
 public static class NoiseMountain  
 {
     public static float[,] EncodeMountain(
-        float[,] finalMap,
-        float[,] noiseRef,
+        ref float[,] finalMap,
+        ref float[,] noiseRef,
         Types.MainMapOptions options,
         int xBoundLeft,
         int xBoundRight,
@@ -24,28 +24,40 @@ public static class NoiseMountain
         int xTrigger = xBoundRight - interpolateIndexRange;
         
         // top-left block
-        for (int y = 0; y < yBoundTop; y++)
+        for (int y = yBoundTop; y < yBoundBottom + interpolateIndexRange; y++)
         {
-            for (int x = 0; x < xBoundLeft; x++)
+            for (int x = xBoundLeft; x < xBoundRight + interpolateIndexRange; x++)
             {
                 if (y > yTrigger && x > xTrigger)
                 {
                     // this is where the four terrain intercepts
+                    float r1 = 1 - (y - yTrigger) / (2 * (float) interpolateIndexRange);
+                    float r2 = 1 - (x - xTrigger) / (2 * (float) interpolateIndexRange);
+                    finalMap[x, y] += c.Evaluate(noiseRef[x, y]) * r1 * r2;
+
                 }
                 else if (y > yTrigger)
                 {
                     // this is the terrain below mountain
+                    float ratio = 1 - (y - yTrigger) / (2 * (float) interpolateIndexRange);
+                    finalMap[x, y] += c.Evaluate(noiseRef[x, y]) * ratio;
                 } 
                 else if (x > xTrigger)
                 {
                     // this is the terrain right to mountain
+                    float ratio = 1 - (x - xTrigger) / (2 * (float) interpolateIndexRange);
+                    finalMap[x, y] += c.Evaluate(noiseRef[x, y]) * ratio;
                 }
                 else
                 {
                     // this is only mountain
+                    finalMap[x, y] = c.Evaluate(noiseRef[x, y]);
                 }
             }
         }
+        
+        // extend iteration
+
         
         return finalMap;
     }

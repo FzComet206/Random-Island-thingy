@@ -10,7 +10,7 @@ public class ActualMapDisplay : MonoBehaviour
     {
         Mesh data = meshData.CreateMesh();
         meshFiler.name = "GeneratedMesh";
-        meshFiler.mesh = data;
+        meshFiler.sharedMesh = data;
         meshCollider.sharedMesh = data;
     }
     

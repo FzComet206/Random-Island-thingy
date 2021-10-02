@@ -21,8 +21,8 @@ public class NoiseMaster
         for (int i = 0; i < nm.octaves; i++)
         {
             // scrolling and random octaves
-            float offsetXOct = prng.Next(-100000, 100000) + nm.offsetx;
-            float offsetYOct = prng.Next(-100000, 100000) + nm.offsety;
+            float offsetXOct = prng.Next(-100000, 100000) + nm.offset.x;
+            float offsetYOct = prng.Next(-100000, 100000) + nm.offset.y;
             octavesOffset[i] = new Vector2(offsetXOct, offsetYOct);
         }
         
@@ -57,6 +57,23 @@ public class NoiseMaster
                     frequency *= nm.lacunarity;
                 }
 
+                // some terrain modifications
+                float nc = nm.negativeClamp;
+                float fs = nm.flattenScale;
+                
+                if (noiseHeight < -nc)
+                {
+                    noiseHeight = -nc - (noiseHeight + nc);
+                } 
+                else if (noiseHeight < -nc + fs)
+                {
+                    noiseHeight = -nc;
+                }
+                else
+                {
+                    noiseHeight = noiseHeight - fs;
+                }
+                
                 // get the max and min noise height in order to normalize the noise map
                 if (noiseHeight > maxNoiseHeight)
                 {
@@ -72,9 +89,6 @@ public class NoiseMaster
             }
         }
         
-        // copy map values
-        float[,] finalizedMap = new float[w, h];
-        
         // iterate again to normalize to 0 to 1
         for (int y = 0; y < h; y++)
         {
@@ -83,10 +97,9 @@ public class NoiseMaster
                 // inverseLerp returns 0 and 1
                 float normalizedHeight = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
                 noiseMap[x, y] = normalizedHeight;
-                finalizedMap[x, y] = normalizedHeight;
             }
         }
-
+        
         // calculate x and y bounds for each of the four areas
 
         int mountainXLeft = 0;
@@ -110,31 +123,43 @@ public class NoiseMaster
         int desertXRight = w;
         int valleyYBottom = w;
         int desertYBottom = h;
+
+        float[,] finalizedMap = new float[w, h];
         
         // encode four terrains with interpolation 
-        finalizedMap = NoiseMountain.EncodeMountain( finalizedMap, noiseMap, nm, 
+        NoiseMountain.EncodeMountain( ref finalizedMap, ref noiseMap, nm, 
             mountainXLeft, 
             mountainXRight, 
             mountainYTop,
             mountainYBottom);
         
-        finalizedMap = NoiseValley.EncodeValley( finalizedMap, noiseMap, nm, 
+        NoiseValley.EncodeValley(ref finalizedMap, ref noiseMap, nm, 
             valleyXLeft, 
             valleyXRight, 
             valleyYTop,
             valleyYBottom);
         
-        finalizedMap = NoisePlain.EncodePlain( finalizedMap, noiseMap, nm, 
+        NoisePlain.EncodePlain(ref finalizedMap, ref noiseMap, nm, 
             plainXLeft, 
             plainXRight, 
             plainYTop,
             plainYBottom);
         
-        finalizedMap = NoiseDesert.EncodeDesert( finalizedMap, noiseMap, nm, 
+        NoiseDesert.EncodeDesert(ref finalizedMap, ref noiseMap, nm, 
             desertXLeft, 
             desertXRight, 
             desertYTop,
             desertYBottom);
+        
+        // adjustment
+
+        for (int y = 0; y < h; y++)
+        {
+            for (int x = 0; x < w; x++)
+            {
+                finalizedMap[x, y] = Mathf.FloorToInt(finalizedMap[x, y] * nm.heightScale);
+            }
+        }
 
         return finalizedMap;
     }
