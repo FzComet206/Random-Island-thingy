@@ -1,6 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class MultiMapGenerator : MonoBehaviour
@@ -12,9 +11,15 @@ public class MultiMapGenerator : MonoBehaviour
     {
         ActualMapDisplay display = FindObjectOfType<ActualMapDisplay>();
         display.DrawMeshMap(
-            MultiMeshGenerator.GenerateTerrainMesh(NoiseMaster.GenerateHeightMap(
-                mainMapOptions
-                ), mainMapOptions)
-            );
+            MultiMeshGenerator.GenerateTerrainMesh(GenerateMapData().heightMap, mainMapOptions)
+        );
     }
+
+    Types.MapData GenerateMapData()
+    {
+        return new Types.MapData(
+            NoiseMaster.GenerateHeightMap(mainMapOptions)
+        );
+    }
+
 }

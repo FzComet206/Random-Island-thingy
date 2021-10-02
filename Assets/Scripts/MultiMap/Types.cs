@@ -70,4 +70,13 @@ public static class Types
         public AnimationCurve noiseHeightCurve;
         public AnimationCurve depthPerLayerCurve;
     }
+    
+    public struct MapData
+    {
+        public float[,] heightMap;
+        public MapData(float[,] heightMap)
+        {
+            this.heightMap = heightMap;
+        }
+    }
 }

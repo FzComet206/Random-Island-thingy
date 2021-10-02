@@ -291,7 +291,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3169977eaf7aaae4da4f6bb84e70327c, type: 2}
+  - {fileID: 2100000, guid: 472b350e05a91124481797b86ec86527, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -395,7 +395,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainMapOptions:
-    seed: 546564
+    seed: 0
     offset: {x: 0, y: 0}
     mapWidth: 1200
     mapHeight: 1200
@@ -809,16 +809,16 @@ MonoBehaviour:
           outWeight: 0.33333334
         - serializedVersion: 3
           time: 0.26570994
-          value: -0.00064785266
-          inSlope: -0.04157707
-          outSlope: -0.04157707
+          value: 0.001735595
+          inSlope: 0.016715026
+          outSlope: 0.016715026
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
-          outWeight: 1
+          outWeight: 0.100213766
         - serializedVersion: 3
           time: 0.62829787
-          value: 0.0010389928
+          value: 0.0026279578
           inSlope: -0.0018328024
           outSlope: -0.0018328024
           tangentMode: 0
