@@ -5,14 +5,15 @@ using UnityEngine;
 public class NoiseDesert : MonoBehaviour
 {
     public static float[,] EncodeDesert(
-        float[,] noiseMap,
+        float [,] finalMap,
+        float[,] noiseRef,
         Types.MainMapOptions options,
         int xBoundLeft,
         int xBoundRight,
-        int yBoundLeft,
-        int yBoundRight)
+        int yBoundTop,
+        int yBoundBottom)
     {
         AnimationCurve c = options.desertOptions.noiseHeightCurve;
-        return noiseMap;
+        return finalMap;
     }
 }

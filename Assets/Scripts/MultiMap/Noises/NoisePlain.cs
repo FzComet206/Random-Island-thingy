@@ -5,14 +5,15 @@ using UnityEngine;
 public class NoisePlain : MonoBehaviour
 {
     public static float[,] EncodePlain(
-        float[,] noiseMap,
+        float [,] finalMap,
+        float[,] noiseRef,
         Types.MainMapOptions options,
         int xBoundLeft,
         int xBoundRight,
-        int yBoundLeft,
-        int yBoundRight)
+        int yBoundTop,
+        int yBoundBottom)
     {
         AnimationCurve c = options.plainOptions.noiseHeightCurve;
-        return noiseMap;
+        return finalMap;
     }
 }

@@ -40,7 +40,7 @@ public static class Types
         public DesertOptions desertOptions;
         
         [Header(" ")]
-        [Range(0, 50)] public int rangeOfInterceptingLerp;
+        [Range(1, 50)] public int rangeOfInterceptingLerp;
 
     }
     

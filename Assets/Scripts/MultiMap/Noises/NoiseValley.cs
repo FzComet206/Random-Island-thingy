@@ -5,14 +5,15 @@ using UnityEngine;
 public class NoiseValley : MonoBehaviour
 {
     public static float[,] EncodeValley(
-        float[,] noiseMap,
+        float [,] finalMap,
+        float[,] noiseRef,
         Types.MainMapOptions options,
         int xBoundLeft,
         int xBoundRight,
-        int yBoundLeft,
-        int yBoundRight)
+        int yBoundTop,
+        int yBoundBottom)
     {
         AnimationCurve c = options.valleyOptions.noiseHeightCurve;
-        return noiseMap;
+        return finalMap;
     }
 }

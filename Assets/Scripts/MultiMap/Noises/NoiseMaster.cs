@@ -6,12 +6,14 @@ using UnityEngine;
 
 public class NoiseMaster
 {
-    public static float[,] GenerateHeightMap(Types.MainMapOptions nm) 
+    public static float[,] GenerateHeightMap(Types.MainMapOptions nm)
     {
+        int w = nm.mapWidth;
+        int h = nm.mapHeight;
+        
         // init noise from script
         Noise n = new Noise();
-        
-        float[,] noiseMap = new float[nm.mapWidth, nm.mapHeight];
+        float[,] noiseMap = new float[w, h];
         
         // Set seed
         System.Random prng = new System.Random(nm.seed);
@@ -29,9 +31,9 @@ public class NoiseMaster
         float minNoiseHeight = float.MaxValue;
         
         // generate noise
-        for (int y = 0; y < nm.mapHeight; y++)
+        for (int y = 0; y < h; y++)
         {
-            for (int x = 0; x < nm.mapWidth; x++)
+            for (int x = 0; x < w; x++)
             {
                 float amplitude = 1;
                 float frequency = 1;
@@ -70,17 +72,70 @@ public class NoiseMaster
             }
         }
         
+        // copy map values
+        float[,] finalizedMap = new float[w, h];
+        
         // iterate again to normalize to 0 to 1
-        for (int y = 0; y < nm.mapHeight; y++)
+        for (int y = 0; y < h; y++)
         {
-            for (int x = 0; x < nm.mapWidth; x++)
+            for (int x = 0; x < w; x++)
             {
                 // inverseLerp returns 0 and 1
                 float normalizedHeight = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);
                 noiseMap[x, y] = normalizedHeight;
+                finalizedMap[x, y] = normalizedHeight;
             }
         }
 
-        return noiseMap;
+        // calculate x and y bounds for each of the four areas
+
+        int mountainXLeft = 0;
+        int valleyXLeft = 0;
+        int mountainYTop = 0;
+        int plainYTop = 0;
+
+        int a = Mathf.FloorToInt(1 + w / 2f);
+        int mountainXRight = a;
+        int valleyXRight = a;
+        int plainXLeft = a;
+        int desertXLeft = a;
+        
+        int b = Mathf.FloorToInt(1 + (h / 2f));
+        int mountainYBottom = b;
+        int valleyYTop = b;
+        int plainYBottom = b;
+        int desertYTop = b;
+
+        int plainXRight = w;
+        int desertXRight = w;
+        int valleyYBottom = w;
+        int desertYBottom = h;
+        
+        // encode four terrains with interpolation 
+        finalizedMap = NoiseMountain.EncodeMountain( finalizedMap, noiseMap, nm, 
+            mountainXLeft, 
+            mountainXRight, 
+            mountainYTop,
+            mountainYBottom);
+        
+        finalizedMap = NoiseValley.EncodeValley( finalizedMap, noiseMap, nm, 
+            valleyXLeft, 
+            valleyXRight, 
+            valleyYTop,
+            valleyYBottom);
+        
+        finalizedMap = NoisePlain.EncodePlain( finalizedMap, noiseMap, nm, 
+            plainXLeft, 
+            plainXRight, 
+            plainYTop,
+            plainYBottom);
+        
+        finalizedMap = NoiseDesert.EncodeDesert( finalizedMap, noiseMap, nm, 
+            desertXLeft, 
+            desertXRight, 
+            desertYTop,
+            desertYBottom);
+
+        return finalizedMap;
     }
 }
