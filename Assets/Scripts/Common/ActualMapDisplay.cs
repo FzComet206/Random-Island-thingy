@@ -14,6 +14,14 @@ public class ActualMapDisplay : MonoBehaviour
         meshCollider.sharedMesh = data;
     }
     
+    public void DrawCircularMeshMap(CircularMeshData meshData)
+    {
+        Mesh data = meshData.CreateMesh();
+        meshFiler.name = "GeneratedMesh";
+        meshFiler.sharedMesh = data;
+        meshCollider.sharedMesh = data;
+    }
+    
     public void DrawTextureMap(Texture2D texture)
     {
         textureRenderer.sharedMaterial.mainTexture = texture;

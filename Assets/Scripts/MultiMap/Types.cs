@@ -79,4 +79,13 @@ public static class Types
             this.heightMap = heightMap;
         }
     }
+    
+    public struct CircularMapdata
+    {
+        public Vector3[,] heightMap;
+        public CircularMapdata(Vector3[,] heightMap)
+        {
+            this.heightMap = heightMap;
+        }
+    }
 }
