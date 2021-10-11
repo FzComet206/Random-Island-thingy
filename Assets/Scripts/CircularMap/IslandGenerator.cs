@@ -11,13 +11,13 @@ public class IslandGenerator : MonoBehaviour
     {
         ActualMapDisplay display = FindObjectOfType<ActualMapDisplay>();
         display.DrawCircularMeshMap(
-            IslandMeshGenerator.GenerateTerrainMesh(GenerateMapData().heightMap)
+            IslandMeshGenerator.GenerateTerrainMesh(GenerateMapData().heightMap, IslandConfig)
         );
     }
 
-    Types.CircularMapdata GenerateMapData()
+    IslandTypes.CircularMapdata GenerateMapData()
     {
-        return new Types.CircularMapdata(
+        return new IslandTypes.CircularMapdata(
             HeightMapGen.GenerateHeightMap(IslandConfig)
         );
     }
