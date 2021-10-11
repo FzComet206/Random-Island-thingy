@@ -29,9 +29,6 @@ public static class HeightMapGen
         int radiusFrac2 = op.ring2RadiusFractions;
         int degreeFrac2 = degreeFrac1 * 2;
         
-        // ring 3 settings
-        int radius3 = op.ring3Radius;
-        
         float noiseAmplitude2 = op.ring2NoiseAmplitude;
         float noiseScale2 = op.ring2NoiseAmplitude;
 
@@ -50,7 +47,7 @@ public static class HeightMapGen
         float r1Step = (radius1 - radius0) / (float) radiusFrac1;
         float a1Step = 360f / degreeFrac1;
 
-        float r2Step = (radius2 - radius1 - radius0) / (float) radiusFrac2;
+        float r2Step = (radius2 - radius1) / (float) radiusFrac2;
         float a2Step = 360f / degreeFrac2;
         
         // outermost ring have the same radius and degree frac as ring 2
@@ -64,7 +61,7 @@ public static class HeightMapGen
             {
                 var (x, y, height) = EvaluateBaseNoise(rValue, aValue, simplex);
 
-                baseMap[r][a] = new Vector3(x, height * heightScale, y) * islandScale;
+                baseMap[r][a] = new Vector3(x, height * 10 * heightScale, y) * islandScale;
 
                 aValue += a0Step;
             }
@@ -72,8 +69,9 @@ public static class HeightMapGen
             rValue += r0Step;
         }
 
-        int cap = radiusFrac0 + radiusFrac1;
-        for (int r = radiusFrac0; r < cap; r++)
+        int bot = radiusFrac0;
+        int cap = bot + radiusFrac1;
+        for (int r = bot; r < cap; r++)
         {
             aValue = 0;
             baseMap[r] = new Vector3[degreeFrac1];
@@ -82,17 +80,17 @@ public static class HeightMapGen
             {
                 var (x, y, height) = EvaluateBaseNoise(rValue, aValue, simplex);
 
-                baseMap[r][a] = new Vector3(x, height * heightScale, y) * islandScale;
+                baseMap[r][a] = new Vector3(x, height * 7 * heightScale, y) * islandScale;
 
                 aValue += a1Step;
             }
 
             rValue += r1Step;
         }
-        
 
-        cap = cap + radiusFrac2;
-        int bot = radiusFrac0 + radiusFrac1;
+
+        bot = cap;
+        cap = bot + radiusFrac2;
         for (int r = bot; r < cap; r++)
         {
             aValue = 0;
@@ -102,31 +100,18 @@ public static class HeightMapGen
             {
                 var (x, y, height) = EvaluateBaseNoise(rValue, aValue, simplex);
 
-                baseMap[r][a] = new Vector3(x, height * heightScale) * islandScale;
+                if (r > cap - 30)
+                {
+                    baseMap[r][a] = new Vector3(x, height * 1 * heightScale, y) * islandScale;
+                }
+                else
+                {
+                    baseMap[r][a] = new Vector3(x, height * 4 * heightScale, y) * islandScale;
+                }
 
                 aValue += a2Step;
             }
 
-            rValue += r2Step;
-        }
-        
-        // last ring
-        cap = cap + radiusFrac2;
-        bot = bot + radiusFrac2;
-        for (int r = bot; r < cap; r++)
-        {
-            aValue = 0;
-            baseMap[r] = new Vector3[degreeFrac2];
-            
-            for (int a = 0; a < degreeFrac2; a++)
-            {
-                var (x, y, height) = EvaluateBaseNoise(rValue, aValue, simplex);
-
-                baseMap[r][a] = new Vector3(x, height * heightScale) * islandScale;
-
-                aValue += a2Step;
-            }
-            
             rValue += r2Step;
         }
         
@@ -137,7 +122,7 @@ public static class HeightMapGen
     {
         float x = r0Value * Mathf.Cos(a0Value * Mathf.Deg2Rad);
         float y = r0Value * Mathf.Sin(a0Value * Mathf.Deg2Rad);
-        float height = ((simplex.Evaluate(x / 30, y / 30) + 1) / 2) * 2;
+        float height = ((simplex.Evaluate(x / 60, y / 60) + 1) / 2);
         return (x, y, height);
     }
 }

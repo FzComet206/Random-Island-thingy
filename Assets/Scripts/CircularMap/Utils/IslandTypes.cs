@@ -13,7 +13,6 @@ public static class IslandTypes
         [Range(1, 100)] public float heightScale;
 
         [Header("Radius")] 
-        public int ring3Radius;
         public int ring2Radius;
         public int ring1Radius;
         public int ring0Radius;
