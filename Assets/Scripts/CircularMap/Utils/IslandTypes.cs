@@ -7,10 +7,20 @@ public static class IslandTypes
     [System.Serializable]
     public struct IslandOptions
     {
-
-        [Range(500, 2000)] public int islandRadius;
         [Range(1, 20)] public float islandScale;
         [Range(1, 100)] public float heightScale;
+        
+        [Header("General Noise Settings")]
+        public int seed;
+        public Vector2 offset;
+        [Range(10, 1000)]
+        public float scale;
+        [Range(0, 10)]
+        public int octaves;
+        [Range(0, 0.2f)]
+        public float persistance;
+        [Range(0, 10f)]
+        public float lacunarity;
 
         [Header("Radius")] 
         public int ring2Radius;
@@ -26,9 +36,23 @@ public static class IslandTypes
         public int ring0DegreeFractions;
 
         [Header("Ring 2 noise settings (Outer Boundary)")]
+        public int ring2BoundaryRadius;
         public float ring2NoiseScale;
-        public float ring2NoiseAmplitude;
+        public int ring2NoiseAmplitude;
     }
+
+    public enum BiomeIndex
+    {
+        Beach,
+        Canyon,
+        Forest,
+        Plain,
+        Rocky,
+        Mystic,
+        Cliff,
+        Volcano
+    }
+    
 
     public struct CircularMapdata
     {

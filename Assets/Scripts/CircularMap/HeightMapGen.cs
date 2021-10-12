@@ -1,16 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public static class HeightMapGen
 {
+    // first go
     public static Vector3[][] GenerateHeightMap(IslandTypes.IslandOptions op)
     {
         Noise simplex = new Noise();
         
         // islandRadius
-        int radiusMain = op.islandRadius;
         float islandScale = op.islandScale;
         float heightScale = op.heightScale;
         
@@ -34,7 +35,7 @@ public static class HeightMapGen
 
         // init array # same as total number of radius fractions for each ring
         Vector3[][] baseMap = new Vector3[
-            radiusFrac0 + radiusFrac1 + radiusFrac2 + radiusFrac2
+            radiusFrac0 + radiusFrac1 + radiusFrac2
         ][];
         
         // ring 0
@@ -59,9 +60,8 @@ public static class HeightMapGen
             
             for (int a = 0; a < degreeFrac0; a++)
             {
-                var (x, y, height) = EvaluateBaseNoise(rValue, aValue, simplex);
-
-                baseMap[r][a] = new Vector3(x, height * 10 * heightScale, y) * islandScale;
+                var (x, y) = EvaluatePositionInWorld(rValue, aValue);
+                baseMap[r][a] = new Vector3(x, 0, y) * islandScale;
 
                 aValue += a0Step;
             }
@@ -78,9 +78,8 @@ public static class HeightMapGen
             
             for (int a = 0; a < degreeFrac1; a++)
             {
-                var (x, y, height) = EvaluateBaseNoise(rValue, aValue, simplex);
-
-                baseMap[r][a] = new Vector3(x, height * 7 * heightScale, y) * islandScale;
+                var (x, y) = EvaluatePositionInWorld(rValue, aValue);
+                baseMap[r][a] = new Vector3(x, 0, y) * islandScale;
 
                 aValue += a1Step;
             }
@@ -98,15 +97,15 @@ public static class HeightMapGen
             
             for (int a = 0; a < degreeFrac2; a++)
             {
-                var (x, y, height) = EvaluateBaseNoise(rValue, aValue, simplex);
+                var (x, y) = EvaluatePositionInWorld(rValue, aValue);
 
                 if (r > cap - 30)
                 {
-                    baseMap[r][a] = new Vector3(x, height * 1 * heightScale, y) * islandScale;
+                    baseMap[r][a] = new Vector3(x, 0, y) * islandScale;
                 }
                 else
                 {
-                    baseMap[r][a] = new Vector3(x, height * 4 * heightScale, y) * islandScale;
+                    baseMap[r][a] = new Vector3(x, 0, y) * islandScale;
                 }
 
                 aValue += a2Step;
@@ -114,15 +113,129 @@ public static class HeightMapGen
 
             rValue += r2Step;
         }
+
+        Noise n = new Noise();
+        System.Random prng = new System.Random(op.seed);
+        Vector2[] octavesOffset = new Vector2[op.octaves];
+        for (int i = 0; i < op.octaves; i++)
+        {
+            // scrolling and random octaves
+            float offsetXOct = prng.Next(-100000, 100000) + op.offset.x;
+            float offsetYOct = prng.Next(-100000, 100000) + op.offset.y;
+            octavesOffset[i] = new Vector2(offsetXOct, offsetYOct);
+        }
+        
+        // input radius and spits out angle bounds
+        Dictionary<int, int> radiusLookUp = new Dictionary<int, int>();
+        // input angle and spits out radius bounds
+        Dictionary<int, int> angleLookUp = new Dictionary<int, int>();
+        
+        // iterate and spits out boundary values stored in hash look ups
+        ProcessBoundaryAndHashMap(ref baseMap, op, simplex, octavesOffset, ref radiusLookUp, ref angleLookUp);
+        // iterate and use hash look ups to spits out modified heights
         
         return baseMap;
     }
 
-    private static (float x, float y, float height) EvaluateBaseNoise(float r0Value, float a0Value, Noise simplex)
+    private static void ProcessBoundaryAndHashMap(
+        ref Vector3[][] baseMap, 
+        IslandTypes.IslandOptions op,
+        Noise simplex,
+        Vector2[] octOffset,
+        ref Dictionary<int, int> radiusLookUp, 
+        ref Dictionary<int, int> angleLookUp)
     {
-        float x = r0Value * Mathf.Cos(a0Value * Mathf.Deg2Rad);
-        float y = r0Value * Mathf.Sin(a0Value * Mathf.Deg2Rad);
-        float height = ((simplex.Evaluate(x / 60, y / 60) + 1) / 2);
-        return (x, y, height);
+        int r = op.ring2BoundaryRadius;
+        int a = baseMap[r].Length;
+        for (int i = 0; i < a; i++)
+        {
+            var (x, y) = EvaluatePositionInWorld(r, 360f / a * i);
+            int offset = Mathf.FloorToInt(
+                1 - Mathf.Abs(
+                    EvaluateHeightInWorld(x, y, simplex, octOffset, op, op.ring2NoiseScale)) * op.ring2NoiseAmplitude);
+
+            offset += Mathf.FloorToInt(
+                1 - Mathf.Abs(
+                    EvaluateHeightInWorld(x + 100, y + 100, simplex, octOffset, op, op.ring2NoiseScale * 3))
+                * op.ring2NoiseAmplitude
+            );
+            
+            angleLookUp[i] = r + offset;
+            baseMap[r + offset][i].y = 10;
+        }
     }
+
+    // second go
+    private static void ProcessHeightAndBiome(
+        ref Vector3[][] baseMap, 
+        Noise simplex, 
+        ref Dictionary<int, int> radiusLookup, 
+        ref Dictionary<int, int> angleLookup)
+    {
+        // third iteration to decide heights
+        int rFrac = baseMap.Length;
+        for (int i = 0; i < rFrac; i++)
+        {
+            int aFrac = baseMap[i].Length;
+            
+            for (int j = 0; j < aFrac; j++)
+            {
+                
+            }
+        }
+    }
+    
+    // helper function for process biome
+    private static IslandTypes.BiomeIndex EvaluateBiomeType(
+        int r, 
+        int a, 
+        ref Dictionary<int, int> radiusLookUp,
+        ref Dictionary<int, int> angleLookUp)
+    {
+        return IslandTypes.BiomeIndex.Beach;
+    }
+
+    // helper function for converting position
+    private static (float x, float y) EvaluatePositionInWorld(float rValue, float aValue)
+    {
+        float x = rValue * Mathf.Cos(aValue * Mathf.Deg2Rad);
+        float y = rValue * Mathf.Sin(aValue * Mathf.Deg2Rad);
+        return (x, y);
+    }
+
+    // this one spits out the general noise height
+    private static float EvaluateHeightInWorld(
+        float x, 
+        float y, 
+        Noise simplex, 
+        Vector2[] octavesOffset, 
+        IslandTypes.IslandOptions nm,
+        float scale = 0)
+    {
+        var sc = nm.scale;
+        if (scale > 1) { sc = scale; }
+
+        float amplitude = 1;
+        float frequency = 1;
+        float noiseHeight = 0;
+
+        for (int i = 0; i < nm.octaves; i++)
+        {
+            // apply octaves sample and offsets with scale and freq
+            float sampleX = (x + octavesOffset[i].x) / sc * frequency;
+            float sampleY = (y + octavesOffset[i].y) / sc * frequency;
+
+            // simplex value of range -1 to 1 sample
+            float simplxValue = simplex.Evaluate(sampleX, sampleY);
+
+            noiseHeight += simplxValue * amplitude;
+
+            // update frequence and amplitude with persistance and lacunarity
+            amplitude *= nm.persistance;
+            frequency *= nm.lacunarity;
+        }
+
+        return noiseHeight;
+    }
+
 }

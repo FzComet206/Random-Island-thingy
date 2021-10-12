@@ -474,18 +474,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IslandConfig:
-    islandRadius: 1200
     islandScale: 1
     heightScale: 5
-    ring2Radius: 1000
-    ring1Radius: 350
-    ring0Radius: 150
+    seed: 0
+    offset: {x: 0, y: 0}
+    scale: 100
+    octaves: 5
+    persistance: 0.08
+    lacunarity: 8
+    ring2Radius: 1200
+    ring1Radius: 600
+    ring0Radius: 300
     ring2RadiusFractions: 120
-    ring1RadiusFractions: 120
-    ring0RadiusFractions: 120
-    ring0DegreeFractions: 180
-    ring2NoiseScale: 0
-    ring2NoiseAmplitude: 0
+    ring1RadiusFractions: 70
+    ring0RadiusFractions: 200
+    ring0DegreeFractions: 360
+    ring2BoundaryRadius: 380
+    ring2NoiseScale: 200
+    ring2NoiseAmplitude: 35
 --- !u!4 &1501733445
 Transform:
   m_ObjectHideFlags: 0
@@ -521,7 +527,7 @@ PrefabInstance:
       objectReference: {fileID: 696093822}
     - target: {fileID: 8008535512892707297, guid: 3f0a076f386d04e4c963aba78b872e64, type: 3}
       propertyPath: mainMapOptions.seed
-      value: 0
+      value: 87546
       objectReference: {fileID: 0}
     - target: {fileID: 8008535512892707326, guid: 3f0a076f386d04e4c963aba78b872e64, type: 3}
       propertyPath: m_Name
