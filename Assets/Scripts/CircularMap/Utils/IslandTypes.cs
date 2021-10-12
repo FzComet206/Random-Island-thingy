@@ -35,10 +35,23 @@ public static class IslandTypes
         [Header("Degree Splitting")] 
         public int ring0DegreeFractions;
 
-        [Header("Ring 2 noise settings (Outer Boundary)")]
+        [Header("Outer Radius Boundary noise settings (Outer Boundary)")]
         public int ring2BoundaryRadius;
         public float ring2NoiseScale;
         public int ring2NoiseAmplitude;
+        
+        [Header("Inner Radius Boundary noise settings (Inner Boundary)")]
+        public int ring1BoundaryRadius;
+        public float ring1NoiseScale;
+        public int ring1NoiseAmplitude;
+
+        [Header("Outer Angle Boundary noise settings (Inner Boundary)")]
+        public float outerBoundaryAngleScale;
+        public int outerBoundaryAngleAmplitude;
+        
+        [Header("Inner Angle Boundary noise settings (Inner Boundary)")]
+        public float innerBoundaryAngleScale;
+        public int innerBoundaryAngleAmplitude;
     }
 
     public enum BiomeIndex

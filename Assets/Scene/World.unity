@@ -490,8 +490,15 @@ MonoBehaviour:
     ring0RadiusFractions: 200
     ring0DegreeFractions: 360
     ring2BoundaryRadius: 380
-    ring2NoiseScale: 200
+    ring2NoiseScale: 250
     ring2NoiseAmplitude: 35
+    ring1BoundaryRadius: 270
+    ring1NoiseScale: 250
+    ring1NoiseAmplitude: 25
+    outerBoundaryAngleScale: 0
+    outerBoundaryAngleAmplitude: 0
+    innerBoundaryAngleScale: 0
+    innerBoundaryAngleAmplitude: 0
 --- !u!4 &1501733445
 Transform:
   m_ObjectHideFlags: 0

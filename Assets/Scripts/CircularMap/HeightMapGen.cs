@@ -61,7 +61,7 @@ public static class HeightMapGen
             for (int a = 0; a < degreeFrac0; a++)
             {
                 var (x, y) = EvaluatePositionInWorld(rValue, aValue);
-                baseMap[r][a] = new Vector3(x, 0, y) * islandScale;
+                baseMap[r][a] = new Vector3(x, 6, y) * islandScale;
 
                 aValue += a0Step;
             }
@@ -79,7 +79,7 @@ public static class HeightMapGen
             for (int a = 0; a < degreeFrac1; a++)
             {
                 var (x, y) = EvaluatePositionInWorld(rValue, aValue);
-                baseMap[r][a] = new Vector3(x, 0, y) * islandScale;
+                baseMap[r][a] = new Vector3(x, 3, y) * islandScale;
 
                 aValue += a1Step;
             }
@@ -101,11 +101,11 @@ public static class HeightMapGen
 
                 if (r > cap - 30)
                 {
-                    baseMap[r][a] = new Vector3(x, 0, y) * islandScale;
+                    baseMap[r][a] = new Vector3(x, 1, y) * islandScale;
                 }
                 else
                 {
-                    baseMap[r][a] = new Vector3(x, 0, y) * islandScale;
+                    baseMap[r][a] = new Vector3(x, 1, y) * islandScale;
                 }
 
                 aValue += a2Step;
@@ -126,12 +126,12 @@ public static class HeightMapGen
         }
         
         // input radius and spits out angle bounds
-        Dictionary<int, int> radiusLookUp = new Dictionary<int, int>();
+        Dictionary<int, int[]> radiusLookUp = new Dictionary<int, int[]>();
         // input angle and spits out radius bounds
-        Dictionary<int, int> angleLookUp = new Dictionary<int, int>();
+        Dictionary<int, int[]> angleLookUp = new Dictionary<int, int[]>();
         
         // iterate and spits out boundary values stored in hash look ups
-        ProcessBoundaryAndHashMap(ref baseMap, op, simplex, octavesOffset, ref radiusLookUp, ref angleLookUp);
+        ProcessBoundaryAndHashMap(ref baseMap, op, simplex, prng, octavesOffset, ref radiusLookUp, ref angleLookUp);
         // iterate and use hash look ups to spits out modified heights
         
         return baseMap;
@@ -141,30 +141,110 @@ public static class HeightMapGen
         ref Vector3[][] baseMap, 
         IslandTypes.IslandOptions op,
         Noise simplex,
+        System.Random prng,
         Vector2[] octOffset,
-        ref Dictionary<int, int> radiusLookUp, 
-        ref Dictionary<int, int> angleLookUp)
+        ref Dictionary<int, int[]> radiusLookUp, 
+        ref Dictionary<int, int[]> angleLookUp)
     {
-        int r = op.ring2BoundaryRadius;
-        int a = baseMap[r].Length;
-        for (int i = 0; i < a; i++)
+        int x1 = prng.Next(-100000, 100000);
+        int y1 = prng.Next(-100000, 100000);
+        
+        int x2 = prng.Next(-100000, 100000);
+        int y2 = prng.Next(-100000, 100000);
+        
+        // this generate first ring boundary into hashmap
+        int r2 = op.ring2BoundaryRadius;
+        int a2 = baseMap[r2].Length;
+        for (int i = 0; i < a2; i++)
         {
-            var (x, y) = EvaluatePositionInWorld(r, 360f / a * i);
-            int offset = Mathf.FloorToInt(
-                1 - Mathf.Abs(
-                    EvaluateHeightInWorld(x, y, simplex, octOffset, op, op.ring2NoiseScale)) * op.ring2NoiseAmplitude);
+            EvaluateRadiusBoundaryCurve(baseMap, op, simplex, octOffset, angleLookUp, r2, a2, i, x1, y1, x2, y2);
+        }
+        
+        // this generate second ring boundary into hashmap
+        int r1 = op.ring1BoundaryRadius;
+        int a1 = baseMap[r1].Length;
+        for (int i = 0; i < a1; i++)
+        {
+            EvaluateRadiusBoundaryCurve(baseMap, op, simplex, octOffset, angleLookUp, r1, a1, i, x1, y1, x2, y2);
+        }
 
-            offset += Mathf.FloorToInt(
-                1 - Mathf.Abs(
-                    EvaluateHeightInWorld(x + 100, y + 100, simplex, octOffset, op, op.ring2NoiseScale * 3))
-                * op.ring2NoiseAmplitude
-            );
+    }
+
+    private static void EvaluateRadiusBoundaryCurve(
+        Vector3[][] baseMap, IslandTypes.IslandOptions op, Noise simplex, Vector2[] octOffset,
+        Dictionary<int, int[]> angleLookUp, int r, int a, int i, int x1, int y1, int x2, int y2)
+    {
+        float scale;
+        int amplitude;
+        if (r == op.ring2BoundaryRadius)
+        {
+            scale = op.ring2NoiseScale;
+            amplitude = op.ring2NoiseAmplitude;
+        }
+        else
+        {
+            scale = op.ring1NoiseScale;
+            amplitude = op.ring1NoiseAmplitude;
+        }
+        
+        // world position into noise function
+        var (x, y) = EvaluatePositionInWorld(r, 360f / a * i);
+
+        // smaller layer
+        int offset = Mathf.FloorToInt(
+            1 - Mathf.Abs(
+                EvaluateHeightInWorld(x + x1, y + y1, simplex, octOffset, op, scale)) * amplitude);
+
+        // larger layer
+        offset += Mathf.FloorToInt(
+            1 - Mathf.Abs(
+                EvaluateHeightInWorld(x + x2, y + y2, simplex, octOffset, op, scale * 3)) * amplitude);
+
+        if (r + offset > op.ring1RadiusFractions + op.ring0RadiusFractions)
+        {
+            // this means the angle is a0 * 2 * 2
+            if (angleLookUp.ContainsKey(i))
+            {
+                angleLookUp[i][1] = r + offset;
+            }
+            else
+            {
+                angleLookUp[i] = new[] {r + offset, 0};
+            }
             
-            angleLookUp[i] = r + offset;
             baseMap[r + offset][i].y = 10;
+            
+        } else if (r + offset > op.ring0RadiusFractions)
+        {
+            // this means the angle is a0 * 2
+            int frac = Mathf.FloorToInt(i / 2f);
+            
+            if (angleLookUp.ContainsKey(i))
+            {
+                angleLookUp[frac][1] = r + offset;
+            }
+            else
+            {
+                angleLookUp[frac] = new []{r + offset, 0};
+            }
+            
+            baseMap[r + offset][frac].y = 10;
         }
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     // second go
     private static void ProcessHeightAndBiome(
         ref Vector3[][] baseMap, 
