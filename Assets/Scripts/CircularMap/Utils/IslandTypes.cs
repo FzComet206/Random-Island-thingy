@@ -29,6 +29,7 @@ public static class IslandTypes
 
         [Header("Radius Splitting")] 
         public int ring2RadiusFractions;
+        
         public int ring1RadiusFractions;
         public int ring0RadiusFractions;
 
@@ -45,7 +46,7 @@ public static class IslandTypes
         public float ring1NoiseScale;
         public int ring1NoiseAmplitude;
 
-        [Header("Outer Angle Boundary noise settings (Inner Boundary)")]
+        [Header("Outer Angle Boundary noise settings (Outer Boundary)")]
         public float outerBoundaryAngleScale;
         public int outerBoundaryAngleAmplitude;
         

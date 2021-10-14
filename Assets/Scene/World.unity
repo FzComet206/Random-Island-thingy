@@ -476,27 +476,27 @@ MonoBehaviour:
   IslandConfig:
     islandScale: 1
     heightScale: 5
-    seed: 0
+    seed: 1235123
     offset: {x: 0, y: 0}
     scale: 100
     octaves: 5
     persistance: 0.08
     lacunarity: 8
-    ring2Radius: 1200
-    ring1Radius: 600
-    ring0Radius: 300
-    ring2RadiusFractions: 120
-    ring1RadiusFractions: 70
-    ring0RadiusFractions: 200
+    ring2Radius: 1800
+    ring1Radius: 1200
+    ring0Radius: 600
+    ring2RadiusFractions: 400
+    ring1RadiusFractions: 400
+    ring0RadiusFractions: 400
     ring0DegreeFractions: 360
-    ring2BoundaryRadius: 380
-    ring2NoiseScale: 250
-    ring2NoiseAmplitude: 35
-    ring1BoundaryRadius: 270
-    ring1NoiseScale: 250
-    ring1NoiseAmplitude: 25
-    outerBoundaryAngleScale: 0
-    outerBoundaryAngleAmplitude: 0
+    ring2BoundaryRadius: 1198
+    ring2NoiseScale: 600
+    ring2NoiseAmplitude: 160
+    ring1BoundaryRadius: 798
+    ring1NoiseScale: 500
+    ring1NoiseAmplitude: 100
+    outerBoundaryAngleScale: 80
+    outerBoundaryAngleAmplitude: 2
     innerBoundaryAngleScale: 0
     innerBoundaryAngleAmplitude: 0
 --- !u!4 &1501733445
@@ -508,7 +508,7 @@ Transform:
   m_GameObject: {fileID: 1501733442}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 3.3513, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -534,7 +534,7 @@ PrefabInstance:
       objectReference: {fileID: 696093822}
     - target: {fileID: 8008535512892707297, guid: 3f0a076f386d04e4c963aba78b872e64, type: 3}
       propertyPath: mainMapOptions.seed
-      value: 87546
+      value: 12312
       objectReference: {fileID: 0}
     - target: {fileID: 8008535512892707326, guid: 3f0a076f386d04e4c963aba78b872e64, type: 3}
       propertyPath: m_Name
