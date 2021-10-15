@@ -41,11 +41,16 @@ public static class IslandTypes
         public float ring2NoiseScale;
         public int ring2NoiseAmplitude;
         
-        [Header("Inner Radius Boundary noise settings (Inner Boundary)")]
+        [Header("Middle Radius Boundary noise settings (Inner Boundary)")]
         public int ring1BoundaryRadius;
         public float ring1NoiseScale;
         public int ring1NoiseAmplitude;
 
+        [Header("Inner Radius Boundary noise settings (Inner Boundary)")]
+        public int ring0BoundaryRadius;
+        public float ring0NoiseScale;
+        public int ring0NoiseAmplitude;
+        
         [Header("Outer Angle Boundary noise settings (Outer Boundary)")]
         public float outerBoundaryAngleScale;
         public int outerBoundaryAngleAmplitude;

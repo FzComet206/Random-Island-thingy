@@ -475,30 +475,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IslandConfig:
     islandScale: 1
-    heightScale: 5
-    seed: 1235123
+    heightScale: 13
+    seed: 174115261
     offset: {x: 0, y: 0}
-    scale: 100
+    scale: 400
     octaves: 5
     persistance: 0.08
     lacunarity: 8
-    ring2Radius: 1800
+    ring2Radius: 2000
     ring1Radius: 1200
     ring0Radius: 600
-    ring2RadiusFractions: 400
+    ring2RadiusFractions: 500
     ring1RadiusFractions: 400
     ring0RadiusFractions: 400
     ring0DegreeFractions: 360
-    ring2BoundaryRadius: 1198
+    ring2BoundaryRadius: 1298
     ring2NoiseScale: 600
     ring2NoiseAmplitude: 160
     ring1BoundaryRadius: 798
-    ring1NoiseScale: 500
-    ring1NoiseAmplitude: 100
+    ring1NoiseScale: 700
+    ring1NoiseAmplitude: 120
+    ring0BoundaryRadius: 398
+    ring0NoiseScale: 200
+    ring0NoiseAmplitude: 60
     outerBoundaryAngleScale: 80
     outerBoundaryAngleAmplitude: 2
-    innerBoundaryAngleScale: 0
-    innerBoundaryAngleAmplitude: 0
+    innerBoundaryAngleScale: 80
+    innerBoundaryAngleAmplitude: 1
 --- !u!4 &1501733445
 Transform:
   m_ObjectHideFlags: 0
