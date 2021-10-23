@@ -24,6 +24,8 @@ public static class IslandTypes
 
         [Header("Island Total Height Curve")] 
         public AnimationCurve curve;
+
+        [Header("BiomeCurves")] public BiomeCurveSettings biomes;
         
         [Header("Radius")] 
         public int ring2Radius;
@@ -76,6 +78,18 @@ public static class IslandTypes
         Volcano
     }
     
+    [System.Serializable]
+    public struct BiomeCurveSettings
+    {
+        public AnimationCurve Forest;
+        public AnimationCurve Beach;
+        public AnimationCurve Plain;
+        public AnimationCurve Canyon;
+        public AnimationCurve Mystic;
+        public AnimationCurve Rocky;
+        public AnimationCurve Cliff;
+        public AnimationCurve Volcano;
+    }
 
     public struct CircularMapdata
     {

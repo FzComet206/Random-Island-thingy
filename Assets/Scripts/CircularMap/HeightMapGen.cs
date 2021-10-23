@@ -472,6 +472,7 @@ public static class HeightMapGen
         Dictionary<int, int> angleLookUpInner)
     {
         Random rand = new Random();
+        IslandTypes.BiomeCurveSettings curves = op.biomes;
         
         // third iteration to decide heights
         int rFrac = baseMap.Length;
@@ -491,7 +492,7 @@ public static class HeightMapGen
                     heightPlus = op.curve.Evaluate(heightPlus);
                     heightPlus = Mathf.Round(Mathf.Lerp(0, 12, heightPlus));
 
-                    float height = 0;
+                    float height = (EvaluateHeightInWorld(x, y, simplex, octOffset, op) + 1) / 2;
                     
                     switch (DetermineBiome(i, j, 
                         radiusLookUpOuter,
@@ -503,35 +504,35 @@ public static class HeightMapGen
                         ))
                     {
                         case IslandTypes.BiomeIndex.Ocean:
-                            height = -10;
+                            height = 0;
                             break;
                         case IslandTypes.BiomeIndex.Forest:
-                            height = 5;
+                            height = curves.Forest.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Beach:
-                            height = 20;
+                            height = curves.Beach.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Plain:
-                            height = 35;
+                            height = curves.Plain.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Canyon:
-                            height = 50;
+                            height = curves.Canyon.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Mystic:
-                            height = 65;
+                            height = curves.Mystic.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Rocky:
-                            height = 80;
+                            height = curves.Rocky.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Cliff:
-                            height = 95;
+                            height = curves.Cliff.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Volcano:
-                            height = 120;
+                            height = curves.Volcano.Evaluate(height);
                             break;
                     }
                     
-                    baseMap[i][j].y = (height + heightPlus) * op.heightScale + op.heightScale;
+                    baseMap[i][j].y = (height + heightPlus / 3) * op.heightScale + op.heightScale;
                     
                 }
                 else
