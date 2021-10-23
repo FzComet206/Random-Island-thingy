@@ -22,6 +22,9 @@ public static class IslandTypes
         [Range(0, 10f)]
         public float lacunarity;
 
+        [Header("Island Total Height Curve")] 
+        public AnimationCurve curve;
+        
         [Header("Radius")] 
         public int ring2Radius;
         public int ring1Radius;

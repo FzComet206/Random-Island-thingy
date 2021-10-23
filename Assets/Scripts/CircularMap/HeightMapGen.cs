@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using Unity.Mathematics;
+using UnityEditor.PackageManager;
 using UnityEngine;
+using Random = System.Random;
 
 public static class HeightMapGen
 {
@@ -238,57 +241,6 @@ public static class HeightMapGen
         {
             areaIndex1 = EvaluateInnerDegreeBoundaryCurve(op, simplex, octOffset, radiusLookUpInner, angleLookUpMiddle, angleLookUpInner, i, a3, x1, y1, x2, y2, areaIndex1);
         }
-        
-        
-        // temp visualization for hashmaps
-        foreach (var VARIABLE in angleLookUpOuter)
-        {
-            int rValue = VARIABLE.Value;
-            int aValue = VARIABLE.Key;
-            baseMap[rValue][aValue].y = 30;
-        }
-        
-        foreach (var VARIABLE in angleLookUpMiddle)
-        {
-            int rValue = VARIABLE.Value;
-            int aValue = VARIABLE.Key;
-            baseMap[rValue][aValue].y = 30;
-        }
-        
-        foreach (var VARIABLE in angleLookUpInner)
-        {
-            int rValue = VARIABLE.Value;
-            int aValue = VARIABLE.Key;
-            baseMap[rValue][aValue].y = 30;
-        }
-
-        for (int i = 0; i < areaIndex0; i++)
-        {
-            foreach (var VARIABLE in radiusLookUpOuter)
-            {
-                int rValue = VARIABLE.Key;
-                int aValue = VARIABLE.Value[i];
-
-                if (aValue != 0)
-                {
-                    baseMap[rValue][aValue].y = 30;
-                }
-            }
-        }
-        
-        for (int i = 0; i < areaIndex1; i++)
-        {
-            foreach (var VARIABLE in radiusLookUpInner)
-            {
-                int rValue = VARIABLE.Key;
-                int aValue = VARIABLE.Value[i];
-
-                if (aValue != 0)
-                {
-                    baseMap[rValue][aValue].y = 30;
-                }
-            }
-        }
     }
 
     // next 100 lines are un-refactored shit
@@ -353,9 +305,9 @@ public static class HeightMapGen
         int i, int a3, int x1, int y1,
         int x2, int y2, int areaIndex)
     {
-        int currentR = outer[i];
+        int currentR = op.ring0RadiusFractions + op.ring1RadiusFractions + op.ring2RadiusFractions;
         int currentA = i;
-        int targetR = inner[currentA / 2];
+        int targetR = op.ring0RadiusFractions;
 
         while (currentR > targetR)
         {
@@ -395,7 +347,6 @@ public static class HeightMapGen
                 }
             }
             
-            targetR = inner[currentA / 2];
             currentR -= 1;
         }
     }
@@ -439,15 +390,51 @@ public static class HeightMapGen
         angleLookUp[i] = r + offset;
     }
 
-    private static int DetermineBiome(int r, int a, int ring, IslandTypes.IslandOptions op,
+    private static IslandTypes.BiomeIndex DetermineBiome(int r, int a,
         Dictionary<int, int[]> radiusLookUpOuter,
         Dictionary<int, int[]> radiusLookUpInner,
         Dictionary<int, int> angleLookUpOuter,
         Dictionary<int, int> angleLookUpMiddle,
-        Dictionary<int, int> angleLookUpInner
+        Dictionary<int, int> angleLookUpInner,
+        IslandTypes.IslandOptions op
     )
     {
-        return -1;
+        int one = op.ring0RadiusFractions;
+        int two = op.ring0RadiusFractions + op.ring1RadiusFractions;
+        int three = op.ring0RadiusFractions + op.ring1RadiusFractions + op.ring2RadiusFractions;
+
+        int _a = a;
+        if (r < two && r >= one)
+        {
+            _a = a * 2;
+        } else if (r < one)
+        {
+            _a = a * 4;
+        }
+
+        if (r < angleLookUpOuter[_a] && r > angleLookUpMiddle[_a / 2])
+        {
+            if (a < radiusLookUpOuter[r][0] || a > radiusLookUpOuter[r][3])
+            {
+                return IslandTypes.BiomeIndex.Forest;
+            }
+            
+            if (a < radiusLookUpOuter[r][1] && a > radiusLookUpOuter[r][0])
+            {
+                return IslandTypes.BiomeIndex.Beach;
+            } 
+            
+            if (a < radiusLookUpOuter[r][2] && a > radiusLookUpOuter[r][1])
+            {
+                return IslandTypes.BiomeIndex.Plain;
+            }
+            
+            if (a < radiusLookUpOuter[r][3] && a > radiusLookUpOuter[r][2])
+            {
+                return IslandTypes.BiomeIndex.Canyon;
+            }
+        }
+        return IslandTypes.BiomeIndex.Mystic;
     }
 
     // second go
@@ -462,6 +449,8 @@ public static class HeightMapGen
         Dictionary<int, int> angleLookUpMiddle,
         Dictionary<int, int> angleLookUpInner)
     {
+        Random rand = new Random();
+        
         // third iteration to decide heights
         int rFrac = baseMap.Length;
         for (int i = 0; i < rFrac; i++)
@@ -472,30 +461,57 @@ public static class HeightMapGen
             {
                 if (i < angleLookUpOuter[j])
                 {
-                    float h = (rFrac - i / 1.5f) * 0.002f;
-                    float h2 = (rFrac - i) * 0.002f;
-                    var (x, y) = EvaluatePositionInWorld(i, 360f / aFrac * j);
-                    int height = Mathf.FloorToInt(
-                        (EvaluateHeightInWorld(x, y, simplex, octOffset, op) + 1 + h2) / 2
-                        * (5 * h));
-                    baseMap[i][j].y = height * op.heightScale;
+                    var (x, y) = EvaluatePositionInWorld(i, 360f / aFrac * (j + 1));
+                    
+                    // hacks
+                    float someInterestingContours = EvaluateHeightInWorld(x + 1000, y + 1000, simplex, octOffset, op, 150) * 70;
+                    float heightPlus = Mathf.Abs(i + someInterestingContours - rFrac) / (float) rFrac;
+                    heightPlus = op.curve.Evaluate(heightPlus);
+                    heightPlus = Mathf.Round(Mathf.Lerp(0, 12, heightPlus));
+
+                    float height = 0;
+                    
+                    switch (DetermineBiome(i, j, 
+                        radiusLookUpOuter,
+                        radiusLookUpInner,
+                        angleLookUpOuter,
+                        angleLookUpMiddle,
+                        angleLookUpInner,
+                        op
+                        ))
+                    {
+                        case IslandTypes.BiomeIndex.Forest:
+                            height = 30;
+                            break;
+                        case IslandTypes.BiomeIndex.Beach:
+                            height = 15;
+                            break;
+                        case IslandTypes.BiomeIndex.Plain:
+                            height = 30;
+                            break;
+                        case IslandTypes.BiomeIndex.Canyon:
+                            height = 15;
+                            break;
+                        case IslandTypes.BiomeIndex.Mystic:
+                            height = 1;
+                            break;
+                        case IslandTypes.BiomeIndex.Rocky:
+                            height = 1;
+                            break;
+                        case IslandTypes.BiomeIndex.Cliff:
+                            height = 1;
+                            break;
+                    }
+                    
+                    baseMap[i][j].y = (height + heightPlus) * op.heightScale + op.heightScale;
+                    
                 }
                 else
                 {
-                    baseMap[i][j].y = -20;
+                    baseMap[i][j].y = 0;
                 }
             }
         }
-    }
-    
-    // helper function for process biome
-    private static IslandTypes.BiomeIndex EvaluateBiomeType(
-        int r, 
-        int a, 
-        ref Dictionary<int, int> radiusLookUp,
-        ref Dictionary<int, int> angleLookUp)
-    {
-        return IslandTypes.BiomeIndex.Beach;
     }
 
     // helper function for converting position
