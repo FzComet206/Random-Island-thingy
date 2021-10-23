@@ -65,6 +65,7 @@ public static class IslandTypes
 
     public enum BiomeIndex
     {
+        Ocean,
         Beach,
         Canyon,
         Forest,

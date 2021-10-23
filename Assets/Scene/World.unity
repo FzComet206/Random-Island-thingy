@@ -267,7 +267,7 @@ Transform:
   m_GameObject: {fileID: 696093820}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5259, y: 1, z: 1.5253}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -476,7 +476,7 @@ MonoBehaviour:
   IslandConfig:
     islandScale: 1
     heightScale: 2
-    seed: 67234
+    seed: 174115261
     offset: {x: 0, y: 0}
     scale: 200
     octaves: 5
@@ -509,22 +509,22 @@ MonoBehaviour:
     ring2Radius: 2000
     ring1Radius: 1200
     ring0Radius: 600
-    ring2RadiusFractions: 400
-    ring1RadiusFractions: 400
-    ring0RadiusFractions: 400
-    ring0DegreeFractions: 360
-    ring2BoundaryRadius: 1198
+    ring2RadiusFractions: 300
+    ring1RadiusFractions: 300
+    ring0RadiusFractions: 300
+    ring0DegreeFractions: 480
+    ring2BoundaryRadius: 898
     ring2NoiseScale: 600
-    ring2NoiseAmplitude: 160
-    ring1BoundaryRadius: 798
+    ring2NoiseAmplitude: 120
+    ring1BoundaryRadius: 598
     ring1NoiseScale: 700
     ring1NoiseAmplitude: 120
-    ring0BoundaryRadius: 398
+    ring0BoundaryRadius: 298
     ring0NoiseScale: 200
     ring0NoiseAmplitude: 60
     outerBoundaryAngleScale: 80
     outerBoundaryAngleAmplitude: 2
-    innerBoundaryAngleScale: 80
+    innerBoundaryAngleScale: 70
     innerBoundaryAngleAmplitude: 1
 --- !u!4 &1501733445
 Transform:

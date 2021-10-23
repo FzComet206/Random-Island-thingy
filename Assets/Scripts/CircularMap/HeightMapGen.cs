@@ -224,7 +224,7 @@ public static class HeightMapGen
         int areaIndex0 = 0;
         for (int i = a3 / 6; i < a3; i += frac1)
         {
-            EvaluateDegreeBoundaryCurve(op, simplex, octOffset, radiusLookUpOuter, angleLookUpOuter, angleLookUpMiddle, i, a3, x1, y1, x2, y2, areaIndex0);
+            EvaluateDegreeBoundaryCurve(op, simplex, octOffset, radiusLookUpOuter, i, a3, x1, y1, x2, y2, areaIndex0);
             areaIndex0++;
         }
         
@@ -239,18 +239,18 @@ public static class HeightMapGen
         int areaIndex1 = 0;
         for (int i = a4 / 6; i < a4; i += frac0)
         {
-            areaIndex1 = EvaluateInnerDegreeBoundaryCurve(op, simplex, octOffset, radiusLookUpInner, angleLookUpMiddle, angleLookUpInner, i, a3, x1, y1, x2, y2, areaIndex1);
+            areaIndex1 = EvaluateInnerDegreeBoundaryCurve(op, simplex, octOffset, radiusLookUpInner, i, a3, x1, y1, x2, y2, areaIndex1);
         }
     }
 
     // next 100 lines are un-refactored shit
     private static int EvaluateInnerDegreeBoundaryCurve(IslandTypes.IslandOptions op, Noise simplex, Vector2[] octOffset,
-        Dictionary<int, int[]> radiusLookUpInner, Dictionary<int, int> angleLookUpMiddle, Dictionary<int, int> angleLookUpInner, int i, int a3, int x1,
+        Dictionary<int, int[]> radiusLookUpInner, int i, int a3, int x1,
         int y1, int x2, int y2, int areaIndex1)
     {
-        int currentR = angleLookUpMiddle[i];
+        int currentR = op.ring0RadiusFractions + op.ring1RadiusFractions;
         int currentA = i;
-        int targetR = angleLookUpInner[currentA / 2];
+        int targetR = 1;
 
         while (currentR > targetR)
         {
@@ -289,7 +289,6 @@ public static class HeightMapGen
                     radiusLookUpInner[currentR][areaIndex1] = currentA;
                 }
             }
-            targetR = angleLookUpInner[currentA / 2];
             currentR -= 1;
         }
 
@@ -300,8 +299,6 @@ public static class HeightMapGen
     private static void EvaluateDegreeBoundaryCurve(
         IslandTypes.IslandOptions op, Noise simplex, Vector2[] octOffset,
         Dictionary<int, int[]> radiusLookUp,
-        Dictionary<int, int> outer, 
-        Dictionary<int, int> inner, 
         int i, int a3, int x1, int y1,
         int x2, int y2, int areaIndex)
     {
@@ -412,29 +409,54 @@ public static class HeightMapGen
             _a = a * 4;
         }
 
-        if (r < angleLookUpOuter[_a] && r > angleLookUpMiddle[_a / 2])
+        if (r < angleLookUpOuter[_a] && r >= angleLookUpMiddle[_a / 2])
         {
-            if (a < radiusLookUpOuter[r][0] || a > radiusLookUpOuter[r][3])
+            if (a < radiusLookUpOuter[r][0] || a >= radiusLookUpOuter[r][3])
             {
                 return IslandTypes.BiomeIndex.Forest;
             }
             
-            if (a < radiusLookUpOuter[r][1] && a > radiusLookUpOuter[r][0])
+            if (a < radiusLookUpOuter[r][1] && a >= radiusLookUpOuter[r][0])
             {
                 return IslandTypes.BiomeIndex.Beach;
             } 
             
-            if (a < radiusLookUpOuter[r][2] && a > radiusLookUpOuter[r][1])
+            if (a < radiusLookUpOuter[r][2] && a >= radiusLookUpOuter[r][1])
             {
                 return IslandTypes.BiomeIndex.Plain;
             }
             
-            if (a < radiusLookUpOuter[r][3] && a > radiusLookUpOuter[r][2])
+            if (a < radiusLookUpOuter[r][3] && a >= radiusLookUpOuter[r][2])
             {
                 return IslandTypes.BiomeIndex.Canyon;
             }
         }
-        return IslandTypes.BiomeIndex.Mystic;
+
+        if (r < angleLookUpMiddle[_a / 2] && r >= angleLookUpInner[_a / 4])
+        {
+            if (a < radiusLookUpInner[r][0] || a >= radiusLookUpInner[r][2])
+            {
+                return IslandTypes.BiomeIndex.Mystic;
+            }
+            
+            if (a < radiusLookUpInner[r][1] && a >= radiusLookUpInner[r][0])
+            {
+                return IslandTypes.BiomeIndex.Rocky;
+            } 
+            
+            if (a < radiusLookUpInner[r][2] && a >= radiusLookUpInner[r][1])
+            {
+                return IslandTypes.BiomeIndex.Cliff;
+            }
+            
+        }
+
+        if (r < angleLookUpInner[_a / 4])
+        {
+            return IslandTypes.BiomeIndex.Volcano;
+        }
+        
+        return IslandTypes.BiomeIndex.Ocean;
     }
 
     // second go
@@ -480,26 +502,32 @@ public static class HeightMapGen
                         op
                         ))
                     {
+                        case IslandTypes.BiomeIndex.Ocean:
+                            height = -10;
+                            break;
                         case IslandTypes.BiomeIndex.Forest:
-                            height = 30;
+                            height = 5;
                             break;
                         case IslandTypes.BiomeIndex.Beach:
-                            height = 15;
+                            height = 20;
                             break;
                         case IslandTypes.BiomeIndex.Plain:
-                            height = 30;
+                            height = 35;
                             break;
                         case IslandTypes.BiomeIndex.Canyon:
-                            height = 15;
+                            height = 50;
                             break;
                         case IslandTypes.BiomeIndex.Mystic:
-                            height = 1;
+                            height = 65;
                             break;
                         case IslandTypes.BiomeIndex.Rocky:
-                            height = 1;
+                            height = 80;
                             break;
                         case IslandTypes.BiomeIndex.Cliff:
-                            height = 1;
+                            height = 95;
+                            break;
+                        case IslandTypes.BiomeIndex.Volcano:
+                            height = 120;
                             break;
                     }
                     
