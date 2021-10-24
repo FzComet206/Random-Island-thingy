@@ -84,9 +84,9 @@ public static class IslandTypes
         public AnimationCurve Forest;
         public AnimationCurve Beach;
         public AnimationCurve Plain;
-        public AnimationCurve Canyon;
-        public AnimationCurve Mystic;
         public AnimationCurve Rocky;
+        public AnimationCurve Mystic;
+        public AnimationCurve Canyon;
         public AnimationCurve Cliff;
         public AnimationCurve Volcano;
     }

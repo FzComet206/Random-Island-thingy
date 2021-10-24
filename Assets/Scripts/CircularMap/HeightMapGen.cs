@@ -428,7 +428,7 @@ public static class HeightMapGen
             
             if (a < radiusLookUpOuter[r][3] && a >= radiusLookUpOuter[r][2])
             {
-                return IslandTypes.BiomeIndex.Canyon;
+                return IslandTypes.BiomeIndex.Rocky;
             }
         }
 
@@ -436,13 +436,13 @@ public static class HeightMapGen
         {
             if (a < radiusLookUpInner[r][0] || a >= radiusLookUpInner[r][2])
             {
-                return IslandTypes.BiomeIndex.Mystic;
-            }
+                return IslandTypes.BiomeIndex.Canyon;
+            } 
             
             if (a < radiusLookUpInner[r][1] && a >= radiusLookUpInner[r][0])
             {
-                return IslandTypes.BiomeIndex.Rocky;
-            } 
+                return IslandTypes.BiomeIndex.Mystic;
+            }
             
             if (a < radiusLookUpInner[r][2] && a >= radiusLookUpInner[r][1])
             {
@@ -515,14 +515,14 @@ public static class HeightMapGen
                         case IslandTypes.BiomeIndex.Plain:
                             height = curves.Plain.Evaluate(height);
                             break;
+                        case IslandTypes.BiomeIndex.Rocky:
+                            height = curves.Rocky.Evaluate(height);
+                            break;
                         case IslandTypes.BiomeIndex.Canyon:
                             height = curves.Canyon.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Mystic:
                             height = curves.Mystic.Evaluate(height);
-                            break;
-                        case IslandTypes.BiomeIndex.Rocky:
-                            height = curves.Rocky.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Cliff:
                             height = curves.Cliff.Evaluate(height);

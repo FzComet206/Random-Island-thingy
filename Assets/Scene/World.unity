@@ -435,10 +435,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1189564656281997058, guid: 8b4e138b3eb690543a54267b1a755e80, type: 3}
-      propertyPath: IslandConfig.seed
-      value: 634252
-      objectReference: {fileID: 0}
     - target: {fileID: 1189564656281997059, guid: 8b4e138b3eb690543a54267b1a755e80, type: 3}
       propertyPath: m_RootOrder
       value: 4
