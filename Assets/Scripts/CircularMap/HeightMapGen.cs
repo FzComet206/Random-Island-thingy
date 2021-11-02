@@ -5,18 +5,18 @@ using System.Runtime.Remoting.Messaging;
 using Unity.Mathematics;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using Random = System.Random;
 
 public static class HeightMapGen
 {
     // first go
-    public static Vector3[][] GenerateHeightMap(IslandTypes.IslandOptions op)
+    public static Vector3[][] GenerateHeightMap(IslandTypes.IslandOptions op, ref Texture2D textureEncodingOne, ref Texture2D textureEncodingTwo)
     {
         Noise simplex = new Noise();
         
         // islandRadius
         float islandScale = op.islandScale;
-        float heightScale = op.heightScale;
         
         // ring 0 settings
         int radius0 = op.ring0Radius;
@@ -148,7 +148,9 @@ public static class HeightMapGen
             radiusLookUpInner,
             angleLookUpOuter,
             angleLookUpMiddle,
-            angleLookUpInner);
+            angleLookUpInner,
+            ref textureEncodingOne,
+            ref textureEncodingTwo);
 
         return baseMap;
     }
@@ -401,6 +403,7 @@ public static class HeightMapGen
         int three = op.ring0RadiusFractions + op.ring1RadiusFractions + op.ring2RadiusFractions;
 
         int _a = a;
+        
         if (r < two && r >= one)
         {
             _a = a * 2;
@@ -469,7 +472,9 @@ public static class HeightMapGen
         Dictionary<int, int[]> radiusLookUpInner,
         Dictionary<int, int> angleLookUpOuter,
         Dictionary<int, int> angleLookUpMiddle,
-        Dictionary<int, int> angleLookUpInner)
+        Dictionary<int, int> angleLookUpInner,
+        ref Texture2D textureFirstFive,
+        ref Texture2D textureLastFour)
     {
         Random rand = new Random();
         IslandTypes.BiomeCurveSettings curves = op.biomes;
@@ -504,30 +509,37 @@ public static class HeightMapGen
                         ))
                     {
                         case IslandTypes.BiomeIndex.Ocean:
-                            height = 0;
                             break;
                         case IslandTypes.BiomeIndex.Forest:
+                            textureFirstFive.SetPixel(i, j, new Color(1, 0, 0, 0));
                             height = curves.Forest.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Beach:
+                            textureFirstFive.SetPixel(i, j, new Color(0, 1, 0, 0));
                             height = curves.Beach.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Plain:
+                            textureFirstFive.SetPixel(i, j, new Color(0, 0, 1, 0));
                             height = curves.Plain.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Rocky:
+                            textureFirstFive.SetPixel(i, j, new Color(0, 0, 0, 1));
                             height = curves.Rocky.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Canyon:
+                            textureLastFour.SetPixel(i, j, new Color(1, 0, 0, 0));
                             height = curves.Canyon.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Mystic:
+                            textureLastFour.SetPixel(i, j, new Color(0, 1, 0, 0));
                             height = curves.Mystic.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Cliff:
+                            textureLastFour.SetPixel(i, j, new Color(0, 0, 1, 0));
                             height = curves.Cliff.Evaluate(height);
                             break;
                         case IslandTypes.BiomeIndex.Volcano:
+                            textureLastFour.SetPixel(i, j, new Color(0, 0, 0, 1));
                             height = curves.Volcano.Evaluate(height);
                             break;
                     }
@@ -537,7 +549,8 @@ public static class HeightMapGen
                 }
                 else
                 {
-                    baseMap[i][j].y = 0;
+                    textureFirstFive.SetPixel(i, j, new Color(0, 0, 0, 0));
+                    baseMap[i][j].y = 5;
                 }
             }
         }

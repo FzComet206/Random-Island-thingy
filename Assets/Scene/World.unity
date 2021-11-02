@@ -173,11 +173,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1200
+  near clip plane: 0.01
+  far clip plane: 1000
   field of view: 60
-  orthographic: 1
-  orthographic size: 628.04
+  orthographic: 0
+  orthographic size: 70.2
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -200,13 +200,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 230489039}
-  m_LocalRotation: {x: 0.70710677, y: 0.000000029802326, z: 0.000000014901163, w: 0.70710677}
-  m_LocalPosition: {x: 571.8362, y: 1163.8268, z: 597.6969}
+  m_LocalRotation: {x: 0.3694345, y: 0.44014236, z: -0.20524147, w: 0.7922555}
+  m_LocalPosition: {x: -256.9, y: 265, z: -723.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 50, y: 58.109, z: 0}
 --- !u!114 &230489043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,7 +266,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 696093820}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 15, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -422,7 +422,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1477748029}
   m_LocalRotation: {x: 0.55403227, y: -0.21201213, z: 0.14845248, w: 0.79124016}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalPosition: {x: 53, y: 3, z: -48}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -435,6 +435,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1189564656281997058, guid: 8b4e138b3eb690543a54267b1a755e80, type: 3}
+      propertyPath: mat
+      value: 
+      objectReference: {fileID: 2100000, guid: 472b350e05a91124481797b86ec86527, type: 2}
+    - target: {fileID: 1189564656281997058, guid: 8b4e138b3eb690543a54267b1a755e80, type: 3}
+      propertyPath: IslandConfig.seed
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1189564656281997059, guid: 8b4e138b3eb690543a54267b1a755e80, type: 3}
       propertyPath: m_RootOrder
       value: 4

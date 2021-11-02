@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class IslandGenerator : MonoBehaviour
 {
-
+    public Material mat;
+    
     [Header("Map Mod")] [SerializeField] private IslandTypes.IslandOptions IslandConfig;
 
     public void DrawMesh()
@@ -17,8 +18,20 @@ public class IslandGenerator : MonoBehaviour
 
     IslandTypes.CircularMapdata GenerateMapData()
     {
-        return new IslandTypes.CircularMapdata(
-            HeightMapGen.GenerateHeightMap(IslandConfig)
+        int r = IslandConfig.ring0RadiusFractions + 
+                IslandConfig.ring1RadiusFractions +
+                IslandConfig.ring2RadiusFractions;
+        int w = IslandConfig.ring0DegreeFractions * 4;
+
+        Texture2D textureOne = new Texture2D(r, w);
+        Texture2D textureTwo = new Texture2D(r, w);
+        
+        IslandTypes.CircularMapdata mp = new IslandTypes.CircularMapdata(
+            HeightMapGen.GenerateHeightMap(IslandConfig, ref textureOne, ref textureTwo)
         );
+
+        TextureEncoder.WriteTextureData(textureOne, textureTwo);
+        
+        return mp;
     }
 }

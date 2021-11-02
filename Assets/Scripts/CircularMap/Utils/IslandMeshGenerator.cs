@@ -23,6 +23,7 @@ public class IslandMeshGenerator : MonoBehaviour
         CircularMeshData meshData = new CircularMeshData(
             r,
             op.ring0DegreeFractions * 7, 
+            // bug if dont use flat shading
             true);
 
         int r0 = radiusFrac0;
@@ -36,6 +37,19 @@ public class IslandMeshGenerator : MonoBehaviour
             for (int j = 0; j < cap; j++)
             {
                 meshData.vertices[vertexIndex] = heightMap[i][j];
+                    
+                if (i < r0)
+                {
+                    meshData.uvs[vertexIndex] = new Vector2(i / (float) r, j / (float) cap / 4);
+                }
+                else if (i < r1)
+                {
+                    meshData.uvs[vertexIndex] = new Vector2(i / (float) r, j / (float) cap / 2);
+                }
+                else
+                {
+                    meshData.uvs[vertexIndex] = new Vector2(i / (float) r, j / (float) cap);
+                }
                 
                 if (i < r0)
                 {
@@ -162,7 +176,7 @@ public class CircularMeshData
         this.useFlatShading = useFlatShading;
         vertices = new Vector3[radiusFrac * degreeFrac];
         triangles = new int[(radiusFrac - 1) * degreeFrac * 6];
-        uvs = new Vector2[radiusFrac* degreeFrac];
+        uvs = new Vector2[radiusFrac * degreeFrac];
     }
 
     public void AddTriangles(int a, int b, int c)
